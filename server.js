@@ -6,7 +6,6 @@ import userRouter from "./routes/userRoutes.js";
 import ownerRouter from "./routes/ownerRoutes.js";
 import bookingRouter from "./routes/bookingRoutes.js";
 
-// Initialize Express App
 const app = express();
 
 // Connect to Database
@@ -14,10 +13,10 @@ connectDB()
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
-// CORS Config
+// CORS configuration
 const allowedOrigins = [
-  process.env.FRONTEND_URL,                    // Original frontend
-  "https://car-rental-one-gamma.vercel.app",   // New frontend
+  process.env.FRONTEND_URL,                    // Frontend URL from .env
+  "https://car-rental-one-gamma.vercel.app",   // Second frontend
   "http://localhost:5173"                      // Local dev
 ];
 
@@ -26,12 +25,12 @@ app.use(cors({
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("❌ Not allowed by CORS: " + origin));
+      console.error("❌ Blocked by CORS:", origin);
+      callback(new Error("Not allowed by CORS"));
     }
   },
   credentials: true
 }));
-
 
 app.use(express.json());
 
