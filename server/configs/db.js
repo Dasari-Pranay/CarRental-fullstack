@@ -1,11 +1,22 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const connectDB = async ()=>{
-    try{
-        mongoose.connection.on('connected',()=> console.log("Database Connected"));
-        await mongoose.connect(`${process.env.MONGODB_URI}/car-rental`)
-    }catch(error){
-        console.log(error.message);
-    }
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
 }
+
+async function connectDB() {
+  if (cached.conn) return cached.conn;
+
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }).then(mongoose => mongoose);
+  }
+  cached.conn = await cached.promise;
+  return cached.conn;
+}
+
 export default connectDB;
