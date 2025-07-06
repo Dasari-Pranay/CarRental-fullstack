@@ -15,7 +15,9 @@ connectDB()
 
 // CORS configuration
 const allowedOrigins = [
-  process.env.FRONTEND_URL
+  process.env.FRONTEND_URL,                    // Frontend URL from .env
+  "https://car-rental-one-gamma.vercel.app",   // Second frontend
+  "http://localhost:5173"                      // Local dev
 ];
 
 app.use(cors({
