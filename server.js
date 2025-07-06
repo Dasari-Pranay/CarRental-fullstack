@@ -16,9 +16,9 @@ connectDB()
 
 // CORS Config
 const allowedOrigins = [
-  process.env.FRONTEND_URL,             // Vercel frontend
-  "https://car-rental-one-gamma.vercel.app", // Current frontend
-  "http://localhost:5173"               // Local dev
+  process.env.FRONTEND_URL,                    // Original frontend
+  "https://car-rental-one-gamma.vercel.app",   // New frontend
+  "http://localhost:5173"                      // Local dev
 ];
 
 app.use(cors({
@@ -26,11 +26,12 @@ app.use(cors({
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("❌ Not allowed by CORS"));
+      callback(new Error("❌ Not allowed by CORS: " + origin));
     }
   },
   credentials: true
 }));
+
 
 app.use(express.json());
 
