@@ -74,18 +74,26 @@ export const createBooking = async (req, res) => {
   }
 };
 
-// ✅ API: Get all bookings for a user
+// ✅ API: Get all bookings for a user (with null car filtering)
 export const getUserBookings = async (req, res) => {
   try {
     const { _id } = req.user;
-    const bookings = await Booking.find({ user: _id })
+
+    // Fetch bookings with car details populated
+    let bookings = await Booking.find({ user: _id })
       .populate("car")
       .sort({ createdAt: -1 });
+
+    // Filter out bookings where the car was deleted
+    bookings = bookings.filter((b) => b.car !== null);
+
     res.json({ success: true, bookings });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    console.error("Error fetching user bookings:", error);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 // ✅ API: Get all bookings for an owner
 export const getOwnerBookings = async (req, res) => {

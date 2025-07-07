@@ -6,7 +6,6 @@ import userRouter from "./routes/userRoutes.js";
 import ownerRouter from "./routes/ownerRoutes.js";
 import bookingRouter from "./routes/bookingRoutes.js";
 
-// Initialize Express App
 const app = express();
 
 // Connect to Database
@@ -14,11 +13,25 @@ connectDB()
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
-// Middleware
+// CORS configuration
+const allowedOrigins = [
+  process.env.FRONTEND_URL,                    // Frontend URL from .env
+  "https://car-rental-one-gamma.vercel.app",   // Second frontend
+  "http://localhost:5173"                      // Local dev
+];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:5173", // Allow frontend
-  credentials: true // Allow cookies & headers
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.error("❌ Blocked by CORS:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
 }));
+
 app.use(express.json());
 
 // Test Route
@@ -29,5 +42,5 @@ app.use('/api/user', userRouter);
 app.use('/api/owner', ownerRouter);
 app.use('/api/bookings', bookingRouter);
 
-// For Vercel serverless deployment
+// Export app for Vercel
 export default app;
